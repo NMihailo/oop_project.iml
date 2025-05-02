@@ -1,4 +1,3 @@
-// Клас Habit
 public class Habit {
     private String name;
 

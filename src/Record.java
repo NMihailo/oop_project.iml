@@ -1,13 +1,13 @@
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 public class Record {
     private Habit habit;
-    private LocalDate date;
+    private Timestamp timestamp;
     private boolean completed;
 
-    public Record(Habit habit, LocalDate date, boolean completed) {
+    public Record(Habit habit, Timestamp timestamp, boolean completed) {
         this.habit = habit;
-        this.date = date;
+        this.timestamp = timestamp;
         this.completed = completed;
     }
 
@@ -15,8 +15,8 @@ public class Record {
         return habit;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
     public boolean isCompleted() {

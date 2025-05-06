@@ -5,8 +5,8 @@ public class Main {
     public static void main(String[] args) {
         Statistics tracker = new Statistics();
 
-        Habit habit1 = new Habit("\"Ранкова зарядка\"");
-        Habit habit2 = new Habit("\"Читання книги\"");
+        Habit habit1 = new Habit("Ранкова зарядка");
+        Habit habit2 = new Habit("Читання книги");
 
         Record record1 = new Record(habit1, Timestamp.valueOf(LocalDateTime.now()), true);
         Record record2 = new Record(habit1, Timestamp.valueOf(LocalDateTime.now().minusDays(1)), false);
@@ -39,5 +39,8 @@ public class Main {
         }
         completionRate = tracker.getCompletionRate(habit2.getName(), DateRange.Last_month);
         System.out.println("Рівень виконання звички "+ habit2.getName() + ": " + completionRate + "%");
+
+        System.out.println(habit1);
+        System.out.println(record1);
     }
 }

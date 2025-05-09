@@ -29,7 +29,7 @@ public class Main {
         for (Record record : tracker.getRecordsForHabit(habit1.getName())) {
             System.out.println(record.getTimestamp() + " - Виконано: " + record.isCompleted());
         }
-        int completionRate = tracker.getCompletionRate(habit1.getName(), DateRange.This_week);
+        int completionRate = tracker.getCompletionRate(habit1.getName(), DateRange.THIS_WEEK);
         System.out.println("Рівень виконання звички "+ habit1.getName() + ": " + completionRate + "%");
 
 
@@ -37,10 +37,7 @@ public class Main {
         for (Record record : tracker.getRecordsForHabit(habit2.getName())) {
             System.out.println(record.getTimestamp() + " - Виконано: " + record.isCompleted());
         }
-        completionRate = tracker.getCompletionRate(habit2.getName(), DateRange.Last_month);
+        completionRate = tracker.getCompletionRate(habit2.getName(), DateRange.THIS_WEEK);
         System.out.println("Рівень виконання звички "+ habit2.getName() + ": " + completionRate + "%");
-
-        System.out.println(habit1);
-        System.out.println(record1);
     }
 }

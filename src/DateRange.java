@@ -1,6 +1,6 @@
 public enum DateRange {
-    Last_month,
-    This_month,
-    Last_week,
-    This_week
+    LAST_MONTH,
+    THIS_MONTH,
+    LAST_WEEK,
+    THIS_WEEK
 }

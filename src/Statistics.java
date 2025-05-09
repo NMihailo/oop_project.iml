@@ -13,18 +13,18 @@ public class Statistics {
     private Timestamp getStartDate(DateRange range) {
         Calendar calendar = Calendar.getInstance();
         switch (range) {
-            case Last_month:
+            case LAST_MONTH:
                 calendar.add(Calendar.MONTH, -1);
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 break;
-            case This_month:
+            case THIS_MONTH:
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 break;
-            case Last_week:
+            case LAST_WEEK:
                 calendar.add(Calendar.WEEK_OF_YEAR, -1);
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 break;
-            case This_week:
+            case THIS_WEEK:
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 break;
         }
@@ -34,17 +34,17 @@ public class Statistics {
     private Timestamp getEndDate(DateRange range) {
         Calendar calendar = Calendar.getInstance();
         switch (range) {
-            case Last_month:
+            case LAST_MONTH:
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 break;
-            case This_month:
+            case THIS_MONTH:
                 calendar.add(Calendar.MONTH, 1);
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 break;
-            case Last_week:
+            case LAST_WEEK:
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 break;
-            case This_week:
+            case THIS_WEEK:
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 break;

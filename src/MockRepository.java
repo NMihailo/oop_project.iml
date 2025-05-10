@@ -28,7 +28,7 @@ public class MockRepository implements Repository {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 break;
         }
-        return (int) (calendar.getTimeInMillis() / 1000); // Конвертуємо в секунди
+        return (int) (calendar.getTimeInMillis() / 1000);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MockRepository implements Repository {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 break;
         }
-        return (int) (calendar.getTimeInMillis() / 1000); // Конвертуємо в секунди
+        return (int) (calendar.getTimeInMillis() / 1000);
     }
 
     @Override
@@ -59,16 +59,32 @@ public class MockRepository implements Repository {
     }
 
     @Override
-    public int getCompletionRate(String habitName, DateRange range) {
-        int startDate = getStartDate(range); // Отримуємо початок періоду як int
-        int endDate = getEndDate(range); // Отримуємо кінець періоду як int
+    public int getProgress(String habitName, DateRange range) {
+        int startDate = getStartDate(range);
+        int endDate = getEndDate(range);
         int total = 0;
         int completed = 0;
 
         for (Record record : records) {
             if (record.getHabit().getName().equals(habitName)
                     && record.getTimestamp() >= startDate
-                    && record.getTimestamp() <= endDate) { // Використовуємо порівняння int
+                    && record.getTimestamp() <= endDate) {
+                total++;
+                if (record.isCompleted()) {
+                    completed++;
+                }
+            }
+        }
+
+        return total == 0 ? 0 : (completed * 100) / total;
+    }
+
+    public int getOverallProgress(String habitName) {
+        int total = 0;
+        int completed = 0;
+
+        for (Record record : records) {
+            if (record.getHabit().getName().equals(habitName)) {
                 total++;
                 if (record.isCompleted()) {
                     completed++;

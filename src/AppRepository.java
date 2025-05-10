@@ -64,7 +64,7 @@ public class AppRepository implements Repository {
     }
 
     @Override
-    public int getCompletionRate(String habitName, DateRange range) {
+    public int getProgress(String habitName, DateRange range) {
         int startDate = getStartDate(range);
         int endDate = getEndDate(range);
         String query = "SELECT COUNT(*) AS total, SUM(CASE WHEN completed THEN 1 ELSE 0 END) AS completed " +
@@ -75,6 +75,27 @@ public class AppRepository implements Repository {
             pstmt.setString(1, habitName);
             pstmt.setInt(2, startDate);
             pstmt.setInt(3, endDate);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int total = rs.getInt("total");
+                int completed = rs.getInt("completed");
+                return total == 0 ? 0 : (completed * 100) / total;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getOverallProgress(String habitName) {
+        String query = "SELECT COUNT(*) AS total, SUM(CASE WHEN completed THEN 1 ELSE 0 END) AS completed " +
+                "FROM records WHERE habit_id = (SELECT id FROM habits WHERE name = ?);";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, habitName);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -105,5 +126,15 @@ public class AppRepository implements Repository {
             e.printStackTrace();
         }
         return records;
+    }
+
+    public void clearRecords() {
+        String query = "DELETE FROM records;";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

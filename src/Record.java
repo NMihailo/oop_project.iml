@@ -4,9 +4,9 @@ import java.time.ZoneId;
 import java.util.Objects;
 
 public class Record {
-    private Habit habit;
-    private int timestamp;
-    private boolean completed;
+    private final Habit habit;
+    private final int timestamp;
+    private final boolean completed;
 
     public Record(Habit habit, int timestamp, boolean completed) {
         this.habit = habit;

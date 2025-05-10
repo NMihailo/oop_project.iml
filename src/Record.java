@@ -1,12 +1,14 @@
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Objects;
 
 public class Record {
     private Habit habit;
-    private Timestamp timestamp;
+    private int timestamp;
     private boolean completed;
 
-    public Record(Habit habit, Timestamp timestamp, boolean completed) {
+    public Record(Habit habit, int timestamp, boolean completed) {
         this.habit = habit;
         this.timestamp = timestamp;
         this.completed = completed;
@@ -16,7 +18,7 @@ public class Record {
         return habit;
     }
 
-    public Timestamp getTimestamp() {
+    public int getTimestamp() {
         return timestamp;
     }
 
@@ -41,5 +43,11 @@ public class Record {
         return "Запис: " + habit +
                 ", Дата= " + timestamp +
                 ", Виконано= " + completed;
+    }
+
+    public LocalDate convertSecondsToDate(int timestamp) {
+        return Instant.ofEpochSecond(timestamp)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 }

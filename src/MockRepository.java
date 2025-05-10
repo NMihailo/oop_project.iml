@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 
 public class MockRepository implements Repository {
@@ -89,29 +88,6 @@ public class MockRepository implements Repository {
             }
         }
         return habitRecords;
-    }
-
-    @Override
-    public void updateRecord(Record updatedRecord) {
-        for (int i = 0; i < records.size(); i++) {
-            Record record = records.get(i);
-            if (record.equals(updatedRecord)) {
-                records.set(i, updatedRecord);
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void deleteRecord(Record recordToDelete) {
-        Iterator<Record> iterator = records.iterator();
-        while (iterator.hasNext()) {
-            Record record = iterator.next();
-            if (record.equals(recordToDelete)) {
-                iterator.remove();
-                return;
-            }
-        }
     }
 }
 

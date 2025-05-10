@@ -88,6 +88,7 @@ public class AppRepository implements Repository {
         return 0;
     }
 
+    @Override
     public int getOverallProgress(String habitName) {
         String query = "SELECT COUNT(*) AS total, SUM(CASE WHEN completed THEN 1 ELSE 0 END) AS completed " +
                 "FROM records WHERE habit_id = (SELECT id FROM habits WHERE name = ?);";

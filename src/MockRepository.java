@@ -79,6 +79,7 @@ public class MockRepository implements Repository {
         return total == 0 ? 0 : (completed * 100) / total;
     }
 
+    @Override
     public int getOverallProgress(String habitName) {
         int total = 0;
         int completed = 0;

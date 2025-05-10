@@ -5,6 +5,7 @@ public interface Repository {
     int getEndDate(DateRange range);
     void addRecord(Record record);
     int getProgress(String habitName, DateRange range);
+    int getOverallProgress(String habitName);
     List<Record> getRecordsForHabit(String habitName);
 }
 

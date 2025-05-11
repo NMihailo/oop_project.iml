@@ -1,58 +1,129 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         DatabaseManager.setupDatabase();
-
         AppRepository tracker = new AppRepository();
+        Scanner scanner = new Scanner(System.in);
 
-        Habit habit1 = new Habit("Ранкова зарядка");
-        Habit habit2 = new Habit("Читання книги");
-        Habit habit3 = new Habit("Пробіжка");
+        while (true) {
+            System.out.println("\nМеню:");
+            System.out.println("1) Додати звичку");
+            System.out.println("2) Додати виконання сьогодні");
+            System.out.println("3) Перегляд виконання");
+            System.out.println("   а) За цей тиждень");
+            System.out.println("   б) За минулий тиждень");
+            System.out.println("   в) За цей місяць");
+            System.out.println("   г) За минулий місяць");
+            System.out.println("   д) За весь час");
+            System.out.println("4) Очищення таблиці записів");
+            System.out.println("5) Вихід");
+            System.out.print("Оберіть опцію: ");
 
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement("INSERT OR IGNORE INTO habits (name) VALUES (?);")) {
-            pstmt.setString(1, habit1.getName());
-            pstmt.executeUpdate();
+            String choice = scanner.nextLine();
 
-            pstmt.setString(1, habit2.getName());
-            pstmt.executeUpdate();
+            switch (choice) {
+                case "1":
+                    System.out.print("Введіть назву звички: ");
+                    String habitName = scanner.nextLine();
+                    Habit habit = new Habit(habitName);
+                    try (Connection conn = DatabaseManager.getConnection();
+                         PreparedStatement pstmt = conn.prepareStatement("INSERT OR IGNORE INTO habits (name) VALUES (?);")) {
+                        pstmt.setString(1, habit.getName());
+                        pstmt.executeUpdate();
+                        System.out.println("Звичка '" + habit.getName() + "' додана!");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
 
-            pstmt.setString(1, habit3.getName());
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
+                case "2":
+                    System.out.print("Введіть назву звички, яку хочете позначити: ");
+                    String habitToTrack = scanner.nextLine();
+                    Habit trackedHabit = new Habit(habitToTrack);
+                    System.out.print("Чи виконано звичку сьогодні? (+/-): ");
+                    String completionInput = scanner.nextLine().trim();
+
+                    boolean isCompleted;
+                    if (completionInput.equals("+")) {
+                        isCompleted = true;
+                    } else if (completionInput.equals("-")) {
+                        isCompleted = false;
+                    } else {
+                        System.out.println("Некоректне введення! Використовуйте '+' для виконано або '-' для не виконано.");
+                        continue;
+                    }
+
+                    Record newRecord = new Record(trackedHabit, (int) (System.currentTimeMillis() / 1000), isCompleted);
+                    tracker.addRecord(newRecord);
+
+                    System.out.println("Запис додано: " + habitToTrack + " - Виконано: " + isCompleted);
+                    break;
+
+                case "3":
+                    System.out.print("Введіть назву звички для перегляду виконання: ");
+                    String habitToView = scanner.nextLine();
+                    System.out.print("Оберіть період (а/б/в/г/д): ");
+                    String periodChoice = scanner.nextLine();
+
+                    DateRange range = null;
+                    switch (periodChoice) {
+                        case "а":
+                            range = DateRange.THIS_WEEK;
+                            break;
+                        case "б":
+                            range = DateRange.LAST_WEEK;
+                            break;
+                        case "в":
+                            range = DateRange.THIS_MONTH;
+                            break;
+                        case "г":
+                            range = DateRange.LAST_MONTH;
+                            break;
+                        case "д":
+                            System.out.println("Записи для звички: " + habitToView);
+                            for (Record record : tracker.getRecordsForHabit(habitToView)) {
+                                System.out.println(record.convertSecondsToDate(record.getTimestamp()) + " - Виконано: " + record.isCompleted());
+                            }
+                            int overallCompletionRate = tracker.getOverallProgress(habitToView);
+                            System.out.println("Загальний рівень виконання звички " + habitToView + ": " + overallCompletionRate + "%");
+                            break;
+                        default:
+                            System.out.println("Некоректний вибір періоду!");
+                            continue;
+                    }
+
+                    if (range != null) {
+                        System.out.println("Записи для звички: " + habitToView);
+                        for (Record record : tracker.getRecordsForHabit(habitToView)) {
+                            System.out.println(record.convertSecondsToDate(record.getTimestamp()) + " - Виконано: " + record.isCompleted());
+                        }
+                        int completionRate = tracker.getProgress(habitToView, range);
+                        System.out.println("Рівень виконання звички " + habitToView + ": " + completionRate + "%");
+                    }
+                    break;
+
+                case "4":
+                    System.out.print("Ви впевнені, що хочете очистити таблицю записів? (так/ні): ");
+                    String confirm = scanner.nextLine();
+                    if (confirm.equalsIgnoreCase("так")) {
+                        tracker.clearRecords();
+                        System.out.println("Таблицю записів очищено!");
+                    } else {
+                        System.out.println("Очищення скасовано.");
+                    }
+                    break;
+
+                case "5":
+                    System.out.println("До побачення!");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Невірний вибір, спробуйте ще раз.");
+            }
         }
-
-//        tracker.clearRecords();
-
-        //Record record1 = new Record(habit3, (int) (System.currentTimeMillis() / 1000), true);
-//        Record record2 = new Record(habit1, (int) (System.currentTimeMillis() / 1000 - 86400), false);
-//        Record record3 = new Record(habit1, (int) (System.currentTimeMillis() / 1000 - 172800), true);
-
-//        Record record4 = new Record(habit2, (int) (System.currentTimeMillis() / 1000), true);
-//        Record record5 = new Record(habit2, (int) (System.currentTimeMillis() / 1000 - 345600), false);
-//        Record record6 = new Record(habit2, (int) (System.currentTimeMillis() / 1000 - 432000), true);
-//        Record record7 = new Record(habit1, (int) (System.currentTimeMillis() / 1000 - 1123200), true);
-
-          //tracker.addRecord(record7);
-
-        System.out.println("Записи для звички: " + habit1.getName());
-        for (Record record : tracker.getRecordsForHabit(habit1.getName())) {
-            System.out.println(record.convertSecondsToDate(record.getTimestamp()) + " - Виконано: " + record.isCompleted());
-        }
-        int completionRate = tracker.getProgress(habit1.getName(), DateRange.THIS_WEEK);
-        System.out.println("Рівень виконання звички " + habit1.getName() + ": " + completionRate + "%");
-
-
-        System.out.println("Записи для звички: " + habit2.getName());
-        for (Record record : tracker.getRecordsForHabit(habit2.getName())) {
-            System.out.println(record.convertSecondsToDate(record.getTimestamp()) + " - Виконано: " + record.isCompleted());
-        }
-        completionRate = tracker.getProgress(habit2.getName(), DateRange.LAST_WEEK);
-        System.out.println("Рівень виконання звички " + habit2.getName() + ": " + completionRate + "%");
-
-        System.out.println("Загальний рівень виконання звички " + habit1.getName() + ": " + tracker.getOverallProgress(habit1.getName()) + "%") ;
     }
 }
